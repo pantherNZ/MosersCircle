@@ -22,7 +22,7 @@ function setup() {
   circlePos = createVector(width/2, height/2);
   circleRadius = width/1.2;
   circleAngle = PI * 2.0 / numPoints;
-  state = State.CountIntersections;//State.CountPairs;//State.DrawLines;
+  state = State.DrawLines;
   time = 0.0;
 }
 
