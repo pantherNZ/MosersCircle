@@ -1,16 +1,19 @@
 // Moser's circle problem
 // https://www.youtube.com/watch?v=YtkIWDE36qU
-const numPoints = 15;
+const numPoints = 5;
+const numLines = ((numPoints + 1) * numPoints) / 2;
 let circlePos;
 let circleRadius;
+let circleAngle;
 
-let time = 0.0;
-const animationSpeed = 4.0;
+let time;
+let state;
+const animationSpeed = 1.0;
 const drawLineTime = 0.5;
 
 function setup() {
   createCanvas(1000, 1000)
-  background(0)
+
   let tex = createP();
   tex.style('font-size', '20px')
   tex.position(60, 165)
@@ -18,43 +21,80 @@ function setup() {
   
   circlePos = createVector(width/2, height/2);
   circleRadius = width/1.2;
+  circleAngle = PI * 2.0 / numPoints;
+  state = State.CountIntersections;//State.CountPairs;//State.DrawLines;
+  time = 0.0;
 }
 
 function draw() {
-  time += deltaTime * 0.001 * animationSpeed;
-  let t = time;
+  background(0)
+  processState();
   drawCircle(circlePos, circleRadius, 0, color(255,0,0), 2);
-  t = drawLines(t);
-  t = drawIntersections(t);
+  drawLines();
+  drawIntersections();
+  
+  drawText(state, createVector(50,50), 255, 20);
+  drawText(numLines, createVector(50,100), 255, 20);
 }
 
-function drawLines(t) {
-  let drawPairsT = t - drawLineTime * numPoints;
+function processState() {
+  time += deltaTime * 0.001 * animationSpeed;
+  
+  if(time >= StateLength[state]) {
+    time = 0.0;
+    state = nextState(state);
+  }
+}
+
+function drawLines() {
+  let count = 0;
   
   for(let i = 0; i <= numPoints; ++i) {
-    const pos = getPosOnCircle( PI * 2.0 / numPoints * i);
+    const pos = getPosOnCircle( circleAngle * i);
+    const drawLineNextT = (StateLength[state] / numPoints) * (i + 1);
+    const drawLineT = (StateLength[state] / numPoints) * i;
     
-    for(let j = i + 1; j <= numPoints; ++j) {
-      let timeV = min(1.0, max(0.0, t - j));
-      let colourT = drawPairsT - ((i * numPoints) + j) * drawLineTime;
-      let colour = (colourT >= 0.0 && colourT < 1.0) ? color(0,0,255) : 100;
-      let size = (colourT >= 0.0 && colourT < 1.0) ? 10.0 : 1.0;
-      animateLine(getPosOnCircle(PI * 2.0 / numPoints * j), pos, colour, size, timeV);
+    for(let j = i + 1; j <= numPoints; ++j, ++count) {
+
+      const drawPairNextT = (StateLength[state] / numLines) * count;
+      const drawPairT = (StateLength[state] / numLines) * (count - 1);
+      const drawPairInterp = state == State.CountPairs ? (time - drawPairT) / (drawPairNextT - drawPairT) : 1.0;
+      const drawLineInterp = state == State.DrawLines ? (time - drawLineT) / (drawLineNextT - drawLineT) : 1.0;
+      const colour = (drawPairInterp >= 0.0 && drawPairInterp < 1.0) ? color(0,0,255) : 100;
+      const size = (drawPairInterp >= 0.0 && drawPairInterp < 1.0) ? 3.0 : 1.0;
+      animateLine(getPosOnCircle(circleAngle * j), pos, colour, size, drawLineInterp);
     }
   }
   
   for(let i = 0; i <= numPoints; ++i) {
-    const angle = PI * 2.0 / numPoints * i;
+    const angle = circleAngle * i;
     drawCircle(getPosOnCircle(angle), 15, 255, 255, 0);
   }
-  
-  return drawPairsT - ((numPoints + 1) * numPoints / 2.0) * drawLineTime;
 }
 
-function drawIntersections(t) {
-  
-  
-  return t;
+function drawIntersections() {
+  if(state == State.CountIntersections) {
+    let quadruplets = combinations(numPoints, 4);
+    let count = 0;
+    
+    const drawIntersectionIdx = Math.floor(time / (StateLength[state] / quadruplets.length));
+
+    const drawIntersection = quad => {
+      const posA = getPosOnCircle(circleAngle * quad[0]);
+      const posB = getPosOnCircle(circleAngle * quad[1]);
+      const posC = getPosOnCircle(circleAngle * quad[2]);
+      const posD = getPosOnCircle(circleAngle * quad[3]);
+      drawLine(posA, posC, 255, 2);
+      drawLine(posB, posD, 255, 2);
+      
+      // Compute intersection
+      const col = color(0,255,255);
+      let intersect = lineIntersection(posA, posC, posB, posD);
+      drawCircle(intersect, 15.0, col);
+    }
+    
+    drawIntersection(quadruplets[drawIntersectionIdx]);
+  }  
 }
 
 function getPosOnCircle(angle) {
@@ -62,15 +102,15 @@ function getPosOnCircle(angle) {
   return p5.Vector.add(circlePos, offset);
 }
 
-function drawCircle(pos, size, fillCol, strokeCol, weight) {
+function drawCircle(pos, size, fillCol, strokeCol = null, weight = 1) {
   fill(fillCol);
-  stroke(strokeCol);
+  stroke(strokeCol !== null ? strokeCol : fillCol);
   strokeWeight(weight);
   ellipse(pos.x, pos.y, size, size);
 }
 
 function animateLine(posA, posB, col, size, t) {
-  drawLine(posA, p5.Vector.lerp(posA, posB, t), col, size);
+  drawLine(posA, p5.Vector.lerp(posA, posB, max(0.0, min(1.0, t))), col, size);
 }
 
 function drawLine(posA, posB, col, size) {
@@ -93,21 +133,13 @@ function numFaces() {
   // V = N + (N choose 4)
   // F = ((N choose 2) + 2 * (N choose 4) + N) - (N + (N choose 4)) + 1
   // F = 1 + (N choose 2) + (N choose 4)
-  return 1 + numLines() + numIntersections();
-}
-  
-function numLines() {
-  if(numPoints < 2) {
-    return 0;
-  }
-  // N choose 2
-  return binomialCoefficient(2);
+  return 1 + numLines + numIntersections();
 }
 
-function numIntersections(numPoints) {
+function numIntersections() {
   if(numPoints < 4) {
     return 0;
   }
   // N choose 4
-  return binomialCoefficient(4);
+  return binomialCoefficient(numPoints, 4);
 }

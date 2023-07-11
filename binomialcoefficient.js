@@ -15,3 +15,29 @@ function factorial(x) {
   factorialStorage.push(f);
   return f;
 }
+
+function combinations(n, k) {
+  const result= [];
+  const combos = [];
+  
+  const recurse = start => {
+    if (combos.length + (n - start + 1) < k) { 
+      return;
+    }
+    
+    recurse(start + 1);
+    combos.push(start);
+    
+    if(combos.length === k) {     
+       result.push(combos.slice());
+    }
+    else if(combos.length + (n - start + 2) >= k){
+       recurse(start + 1);
+    }
+    
+    combos.pop();     
+  }
+  
+  recurse(1, combos);
+  return result;
+}
