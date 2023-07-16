@@ -4,16 +4,14 @@ const State = Object.freeze({
   CountIntersections: 2,
   CountPlanarEdges: 3,
   CountFaces: 4,
-  FinalRender: 5
 });
 
 const StateLength = Object.freeze([
   5, 
   12, 
   12, 
-  5, 
-  5, 
-  5  
+  8, 
+  30, 
 ]);
 
 function nextState(state) {
