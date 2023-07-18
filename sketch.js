@@ -1,15 +1,18 @@
 // Moser's circle problem
 // https://www.youtube.com/watch?v=YtkIWDE36qU
 
-let stateMachine, data, renderData, textDisplay;
+let stateMachine, data, renderData, textDisplay, input;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
+  input = new InputController();
+  stateMachine = new StateMachine();
   data = new MoserCircleData();
   renderData = new MoserRenderData();
   textDisplay = new TextDisplay();
-  stateMachine = new StateMachine();
+  stateMachine.addStateChangedCallback((prevState, state) => textDisplay.onStateChanged(prevState, state));
+  input.addInputChangedCallback((inputData) => stateMachine.onInputChanged(inputData));
 }
 
 function draw() {

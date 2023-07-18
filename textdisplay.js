@@ -1,25 +1,37 @@
 class TextDisplay {
   constructor() {
+    this.currentText = null;
+  }
 
+  onStateChanged(prevState, state) {
+    if(this.currentText != null) {
+      this.currentText.remove();
+   }
+    
+    if(state == State.CountPlanarEdges) {    
+      this.currentText = createP();
+      this.currentText.style('font-size', '20px');
+      this.currentText.position(60, 165);
+      katex.render('{n\\choose 2}', this.currentText.elt);
+    }
   }
 
   render(stateMachine) {
     textAlign(CENTER);
     switch(stateMachine.state) {
       case State.Intro:
-
-      case State.DrawLines:
         drawText("Moser's circle problem", createVector(width/2, 50), 255, 40);
         drawText("How many regions are there when we divide a circle by N points connected to each other around the circumference?", 
           createVector(width/2, 80), 255, 20);
         break;
-      case State.CountPlanarEdges: {
-          //let tex = createP();
-          //tex.style('font-size', '20px')
-          //tex.position(60, 165)
-          //katex.render('{n\\choose x}', tex.elt)
-          break;
-      }
+      case State.DrawLines:
+        drawText("To start, we can find how many lines there are", 
+          createVector(width/2, 80), 255, 20);
+        break;
+      case State.CountIntersections:
+        break;
+      case State.CountPlanarEdges:
+        break;
       default:
         break;
     }

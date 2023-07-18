@@ -174,12 +174,8 @@ class MoserRenderData {
       Object.values(planarGraph).forEach(node => {
         const from = node[0].copy();
         node.sort((a, b) => {
-          if (vecEquals(a, from)) {
-            return -9999;
-          }
-          if (vecEquals(b, from)) {
-            return 9999;
-          }
+          if (vecEquals(a, from)) { return -9999; }
+          if (vecEquals(b, from)) { return 9999; }
           const dirA = p5.Vector.sub(a, from);
           const dirB = p5.Vector.sub(b, from);
           return dirA.heading() - dirB.heading();
@@ -200,9 +196,8 @@ class MoserRenderData {
         for (let i = 1; i < currentNode.length && numFaces*timePerFace < stateMachine.time; ++i) {
           let previous = start;
           let current = currentNode[i];
-          let safety = 15;
 
-          while (!vecEquals(start, current) && safety-- > 0) {
+          while (!vecEquals(start, current)) {
             const key = hashVecs(previous, current);
             if (used.has(key)) {
               vertices.length = 0;
