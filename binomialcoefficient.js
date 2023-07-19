@@ -26,7 +26,7 @@ function combinations(n, k) {
     }
     
     recurse(start + 1);
-    combos.push(start);
+    combos.push(start - 1);
     
     if(combos.length === k) {     
        result.push(combos.slice());

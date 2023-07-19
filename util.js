@@ -24,11 +24,6 @@ function randCol(v) {
     return color(hashRand(v).x*255.0, hashRand(v).y*255.0, hashRand(hashRand(v)).x*255.0);
 }
 
-function getPosOnCircle(angle) {
-    const offset = createVector(sin(angle), cos(angle)).mult(circleRadius/2.0);
-    return p5.Vector.add(circlePos, offset);
-}
-
 function drawCircle(pos, size, fillCol, strokeCol = null, weight = 1) {
     fill(fillCol);
     stroke(strokeCol !== null ? strokeCol : fillCol);
@@ -50,4 +45,11 @@ function drawText(str, pos, col, size) {
     fill(col);
     textSize(size);
     text(str, pos.x, pos.y)
+}
+
+function drawFace(numCycles, numFaces, vertices) {
+    fill(randCol(createVector(numFaces*13.12 + numCycles*9.32), numFaces*99.23 + numCycles*11.23));
+    beginShape();
+    vertices.forEach(v => vertex(v.x, v.y));
+    endShape(CLOSE);
 }

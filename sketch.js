@@ -1,6 +1,12 @@
 // Moser's circle problem
 // https://www.youtube.com/watch?v=YtkIWDE36qU
 
+// TODO:
+// Add text/info display
+// Drag and drop points input
+// Randomise vs symetrical dropdown option
+// Input for # points
+
 let stateMachine, data, renderData, textDisplay, input;
 
 function setup() {
@@ -16,12 +22,13 @@ function setup() {
 }
 
 function draw() {
-  background(0)
+  background(0);
   stateMachine.processState();
-  renderData.render(stateMachine, data);
+  renderData.render(data, stateMachine);
   textDisplay.render(stateMachine);
 }
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
+  data.computeData();
 }

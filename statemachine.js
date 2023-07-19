@@ -58,7 +58,6 @@ class StateMachine {
   }
 
   onInputChanged(data) {
-    console.log(data);
     this.speed = data.animationSpeed;
   }
 }
