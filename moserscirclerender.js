@@ -65,10 +65,6 @@ class MoserRenderData {
       return;
     }
 
-    data.intersections.forEach(x => {
-      drawCircle(x, 8.0, this.intersectionPointColour);
-    });
-
     const t = stateMachine.time / (stateMachine.getStateLength() / 2.0);
 
     for (const intersections of Object.values(data.closestIntersectPerLine)) {
@@ -96,6 +92,10 @@ class MoserRenderData {
         drawLine(p5.Vector.add(posA, direction), p5.Vector.sub(posB, direction), this.connectionLineColour, 2);
       }
     }
+
+    data.intersections.forEach(x => {
+      drawCircle(x, 8.0, this.intersectionPointColour);
+    });
 
     // Faces
     if (stateMachine.state == State.CountFaces) {

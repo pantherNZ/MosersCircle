@@ -1,32 +1,54 @@
 class TextDisplay {
   constructor() {
-    this.currentText = null;
+    this.allKatexRenders = [];
+
+    this.drawLines1 = this.createKatex("\\text{We can calculate this as }{n\\choose 2}");
+    this.drawLines2 = this.createKatex("\\text{More generally, this is equivalent to }{\\Big(\\frac{Num\\space Points\\space *\\space (Num\\space Points\\space -\\space 1)}{2}\\Big)}");
+    this.drawLines3 = this.createKatex("\\text{Where }{n\\choose 2}\\text{ is the binomial coefficient }{\\Big(\\frac{n!}{k!*(n-k)!}\\Big)}");
+  }
+
+  createKatex(renderText) {
+    let newRender = createElement();
+    newRender.style('font-size', '20px');
+    newRender.style('display', 'block');
+    newRender.style('text-align','center');
+    newRender.hide();
+    katex.render(renderText, newRender.elt);
+    this.allKatexRenders.push(newRender);
+    return newRender;
   }
 
   onStateChanged(prevState, state) {
-    if(this.currentText != null) {
-      this.currentText.remove();
-   }
-    
-    if(state == State.CountPlanarEdges) {    
-      this.currentText = createP();
-      this.currentText.style('font-size', '20px');
-      this.currentText.position(60, 165);
-      katex.render('{n\\choose 2}', this.currentText.elt);
+    for(const text of this.allKatexRenders) {
+      text.hide();
     }
   }
 
   render(stateMachine) {
     textAlign(CENTER);
+    textSize(5);
+    strokeWeight(0);
+    textFont('Helvetica');
+    stateMachine.state = State.DrawLines;
+
     switch(stateMachine.state) {
       case State.Intro:
         drawText("Moser's circle problem", createVector(width/2, 50), 255, 40);
         drawText("How many regions are there when we divide a circle by N points connected to each other around the circumference?", 
-          createVector(width/2, 80), 255, 20);
+          createVector(width/2, 80), 255, 15);
         break;
       case State.DrawLines:
-        drawText("To start, we can find how many lines there are", 
-          createVector(width/2, 80), 255, 20);
+        //if(stateMachine.getStatePercentProgress() < 0.5) {
+        //  drawText("To start, we can find how many lines there are.", createVector(width/2, 80), 255, 15);
+        //}
+        //else {
+          this.drawLines1.position(width/2, 40);
+          this.drawLines2.position(width/2, 75);
+          this.drawLines3.position(width/2, 120);
+          this.drawLines1.show();
+          this.drawLines2.show();
+          this.drawLines3.show();
+        //}
         break;
       case State.CountIntersections:
         break;

@@ -1,7 +1,7 @@
 class MoserCircleData {
   constructor() {
     this.numPoints = 9;
-    this.numLines = ((this.numPoints + 1) * this.numPoints) / 2;
+    this.numLines = (this.numPoints * (this.numPoints-1)) / 2;
     this.circleAngle = PI * 2.0 / this.numPoints;
     this.computeData();
   }

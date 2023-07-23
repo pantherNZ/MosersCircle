@@ -9,9 +9,9 @@ class InputController {
     this.data = new InputData();
     this.callbacks = [];
     
-    //let button = createButton('submit');
-    //button.position(0, 65);
-    //button.mousePressed(x => {});
+    let button = createButton('submit');
+    button.position(0, 65);
+    button.mousePressed(x => {});
 
     this.slider = createSlider(0,5,1,0.2);
     this.slider.position(0,0);

@@ -57,6 +57,10 @@ class StateMachine {
     return StateLength[this.state];
   }
 
+  getStatePercentProgress() {
+    return this.time / this.getStateLength();
+  }
+
   onInputChanged(data) {
     this.speed = data.animationSpeed;
   }
