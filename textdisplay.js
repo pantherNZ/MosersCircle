@@ -2,16 +2,27 @@ class TextDisplay {
   constructor() {
     this.allKatexRenders = [];
 
-    this.drawLines1 = this.createKatex("\\text{We can calculate this as }{n\\choose 2}");
-    this.drawLines2 = this.createKatex("\\text{More generally, this is equivalent to }{\\Big(\\frac{Num\\space Points\\space *\\space (Num\\space Points\\space -\\space 1)}{2}\\Big)}");
-    this.drawLines3 = this.createKatex("\\text{Where }{n\\choose 2}\\text{ is the binomial coefficient }{\\Big(\\frac{n!}{k!*(n-k)!}\\Big)}");
+    this.intro = this.createKatex("\\text{Moser's circle problem}", 40);
+    this.intro2 = this.createKatex("\\text{How many regions are there when we divide a circle by N points connected to each other?}");
+    this.drawLines = this.createKatex("\\text{To start, we can find how many lines there are.}");
+    this.drawLines1 = this.createKatex("\\text{We can calculate this as }{\\Big(\\frac{Num\\space Points\\space *\\space (Num\\space Points\\space -\\space 1)}{2}\\Big)}");
+    this.drawLines2 = this.createKatex("\\text{More generally, this is equivalent to n choose 2: }{n\\choose 2}");
+    this.drawLines3 = this.createKatex("\\text{Where }{n\\choose 2}\\text{ is the binomial coefficient }{\\Big(\\frac{n!}{k!(n-k)!}\\Big)}");
+    this.countIntersections = this.createKatex("\\text{Next we can find how many intersection points there are.}");
+    this.countIntersections2 = this.createKatex("\\text{This can be calculated as n choose 4: }{n\\choose 4}");
+    this.planarGraph = this.createKatex("\\text{Next we can use the intersections to form a planar graph.}");
+    this.planarGraph2 = this.createKatex("\\text{For a planar graph: }{Faces\\space =\\space Edges\\space -\\space Vertices\\space +\\space 2}");
+    this.planarGraph3 = this.createKatex("\\text{We can subtract 1 for the infinite outside face.}");
+    this.countFaces1 = this.createKatex("{E = n\\choose 2}{ + n\\choose 4 + n}");
+    this.countFaces2 = this.createKatex("{V = n + n\\choose 4}");
+    this.countFaces3 = this.createKatex("{F = n\\choose 2}{+ n\\choose 4 + n}{ - (n + n\\choose 4) + 1}");
+    this.countFaces4 = this.createKatex("\\text{Simplify to get our final calculation: }{F = n\\choose 2}{+ n\\choose 4 + 1}");
+    this.countFaces4 = this.createKatex("{F = n\\choose 2}{ + n\\choose 4 + 1}");
   }
 
-  createKatex(renderText) {
-    let newRender = createElement();
-    newRender.style('font-size', '20px');
-    newRender.style('display', 'block');
-    newRender.style('text-align','center');
+  createKatex(renderText, size=20) {
+    let newRender = createP();
+    newRender.style('font-size', size+'px');
     newRender.hide();
     katex.render(renderText, newRender.elt);
     this.allKatexRenders.push(newRender);
@@ -25,63 +36,54 @@ class TextDisplay {
   }
 
   render(stateMachine) {
-    textAlign(CENTER);
+    textAlign(CENTER, CENTER);
     textSize(5);
     strokeWeight(0);
     textFont('Helvetica');
-    stateMachine.state = State.DrawLines;
 
     switch(stateMachine.state) {
       case State.Intro:
-        drawText("Moser's circle problem", createVector(width/2, 50), 255, 40);
-        drawText("How many regions are there when we divide a circle by N points connected to each other around the circumference?", 
-          createVector(width/2, 80), 255, 15);
+        this.intro.position(width/2-220, 20);
+        this.intro2.position(width/2-450, 100);
+        this.intro.show();
+        this.intro2.show();
         break;
       case State.DrawLines:
-        //if(stateMachine.getStatePercentProgress() < 0.5) {
-        //  drawText("To start, we can find how many lines there are.", createVector(width/2, 80), 255, 15);
-        //}
-        //else {
-          this.drawLines1.position(width/2, 40);
-          this.drawLines2.position(width/2, 75);
-          this.drawLines3.position(width/2, 120);
+        if(stateMachine.getStatePercentProgress() < 0.5) {
+          this.drawLines.position(width/2-220, 40);
+          this.drawLines.show();
+        }
+        else {
+          this.drawLines1.position(width/2-240, 40);
+          this.drawLines2.position(width/2-240, 85);
+          this.drawLines3.position(width/2-220, 120);
           this.drawLines1.show();
           this.drawLines2.show();
           this.drawLines3.show();
-        //}
+          this.drawLines.hide();
+        }
         break;
       case State.CountIntersections:
+        this.countIntersections.position(width/2-280, 40);
+        this.countIntersections.show();
+        if(stateMachine.getStatePercentProgress() >= 0.5) {
+          this.countIntersections2.position(width/2-200, 80);
+          this.countIntersections2.show();
+        }
         break;
       case State.CountPlanarEdges:
+        this.planarGraph.position(width/2-280, 40);
+        this.planarGraph.show();
+
+        if(stateMachine.getStatePercentProgress() >= 0.5) {
+          this.planarGraph2.position(width/2-270, 80);
+          this.planarGraph3.position(width/2-250, 120);
+          this.planarGraph2.show();
+          this.planarGraph3.show();
+        }
         break;
       default:
         break;
     }
   }
 }
-
-//Moser's circle problem
-//How many regions are there when we divide a circle by N points connected to each other around the circumference?
-//
-//how many lines are there?
-//n choose 2 OR ((this.numPoints + 1) * this.numPoints) / 2;
-//
-//how many intersection points are there?
-//n choose 4
-//
-//binomial coefficient n, 4
-//x! / (k! * (n-k)!)
-//
-//non-planar graph faces (Euler's formula)
-//F = E - V + 2
-//F = E - V + 1 (subtract 1 for the infinite outside face)
-//
-//
-//E = n choose 2 + n choose 4 + n
-//V = n + n choose 4
-//F = n choose 2 + n choose 4 + n + n + n choose 4 + 1
-//Simplify to get
-//F = 1 + (N choose 2) + (N choose 4)
-//F = (SHOW RESULT)
-//
-//Count: (COUNT THEM UP)
