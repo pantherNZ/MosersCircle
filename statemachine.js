@@ -9,8 +9,8 @@ const State = Object.freeze({
 
 const StateLength = Object.freeze([
   5, 
-  5,
-  12,
+  8,
+  10,
   12,
   8,
   30,
@@ -19,7 +19,7 @@ const StateLength = Object.freeze([
 class StateMachine {
   constructor() {
     this.onStateChanged = new Event("stateChanged");
-    this.state = State.DrawLines;
+    this.state = State.Intro;
     this.time = 0.0;
     this.speed = 1.0;
     this.numCycles = 0;

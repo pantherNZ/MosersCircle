@@ -2,7 +2,6 @@
 // https://www.youtube.com/watch?v=YtkIWDE36qU
 
 // TODO:
-// Add text/info display
 // Drag and drop points input
 // Randomise vs symetrical dropdown option
 // Input for # points
@@ -17,8 +16,7 @@ function setup() {
   stateMachine = new StateMachine();
   data = new MoserCircleData();
   renderData = new MoserRenderData();
-  textDisplay = new TextDisplay();
-  stateMachine.addStateChangedCallback((prevState, state) => textDisplay.onStateChanged(prevState, state));
+  textDisplay = new TextDisplay(data);
   input.addInputChangedCallback((inputData) => stateMachine.onInputChanged(inputData));
 }
 
@@ -31,5 +29,6 @@ function draw() {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
+  textDisplay = new TextDisplay(data);
   data.computeData();
 }

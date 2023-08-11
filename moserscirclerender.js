@@ -51,7 +51,7 @@ class MoserRenderData {
 
     const drawIntersectionIdx = Math.floor(stateMachine.time / (stateMachine.getStateLength() / data.quadruplets.length));
 
-    for (let i = 0; i < drawIntersectionIdx; ++i) {
+    for (let i = 0; i <= drawIntersectionIdx; ++i) {
       drawCircle(data.intersections[i], 8.0, this.intersectionPointColour);
     }
 
