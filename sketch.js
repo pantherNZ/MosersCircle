@@ -16,8 +16,12 @@ function setup() {
   stateMachine = new StateMachine();
   data = new MoserCircleData();
   renderData = new MoserRenderData();
-  textDisplay = new TextDisplay(data);
+  textDisplay = new TextDisplay();
+  
+  windowResized();
+
   input.addInputChangedCallback((inputData) => stateMachine.onInputChanged(inputData));
+  input.addInputChangedCallback((inputData) => windowResized());
 }
 
 function draw() {
@@ -29,6 +33,6 @@ function draw() {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-  textDisplay = new TextDisplay(data);
-  data.computeData();
+  data.computeData(input.data);
+  textDisplay.initialise(data);
 }

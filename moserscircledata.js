@@ -1,9 +1,5 @@
 class MoserCircleData {
   constructor() {
-    this.numPoints = 9;
-    this.numLines = (this.numPoints * (this.numPoints-1)) / 2;
-    this.circleAngle = PI * 2.0 / this.numPoints;
-    this.computeData();
   }
 
   numFaces() {
@@ -25,7 +21,11 @@ class MoserCircleData {
     return binomialCoefficient(this.numPoints, 4);
   }
 
-  computeData() {
+  computeData(inputData) {
+    this.numPoints = inputData.numPoints;
+    this.numLines = (this.numPoints * (this.numPoints-1)) / 2;
+    this.circleAngle = PI * 2.0 / this.numPoints;
+
     this.circlePos = createVector(width/2, height/2);
     const circleScale = 0.7;
     this.circleRadius = Math.min(width, height)*circleScale;  

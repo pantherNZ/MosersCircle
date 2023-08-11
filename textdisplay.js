@@ -1,7 +1,14 @@
 class TextDisplay {
-  constructor(data) {
+  constructor() {
     this.allKatexRenders = [];
+  }
 
+  initialise(data) {
+    for(const [text, state, percentMin, percentMax] of this.allKatexRenders) {
+      text.remove();
+    }
+
+    this.allKatexRenders = [];
     this.createKatex("\\text{Moser's circle problem}", State.Intro, width/2-220, 20, 0.0, 1.0, 40);
     this.createKatex("\\text{How many regions are there when we divide a circle by N points connected to each other?}", State.Intro, width/2-450, 100);
     this.createKatex("\\text{To start, we can find how many lines there are.}", State.DrawLines, width/2-220, 40);
