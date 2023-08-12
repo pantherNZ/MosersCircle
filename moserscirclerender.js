@@ -26,7 +26,7 @@ class MoserRenderData {
   }
   
   drawLines(data, stateMachine) {
-    if (stateMachine.state >= State.CountPlanarEdges) {
+    if (stateMachine.state == State.Intro || stateMachine.state >= State.CountPlanarEdges) {
       return;
     }
 

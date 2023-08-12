@@ -22,24 +22,25 @@ class MoserCircleData {
   }
 
   computeData(inputData) {
+    this.randomise = inputData.randomise;
     this.numPoints = inputData.numPoints;
-    this.numLines = (this.numPoints * (this.numPoints-1)) / 2;
+    this.numLines = (this.numPoints * (this.numPoints - 1)) / 2;
     this.circleAngle = PI * 2.0 / this.numPoints;
 
-    this.circlePos = createVector(width/2, height/2);
+    this.circlePos = createVector(width / 2, height / 2);
     const circleScale = 0.7;
-    this.circleRadius = Math.min(width, height)*circleScale;  
+    this.circleRadius = Math.min(width, height) * circleScale;
     this.quadruplets = combinations(this.numPoints, 4);
 
     this.circumferencePoints = [];
     for (let i = 0; i < this.numPoints; ++i) {
-      this.circumferencePoints.push(this.getPosOnCircle(this.circleAngle * i));
+      this.circumferencePoints.push(this.getCirclePoint(i));
     }
 
     this.lines = [];
     for (let i = 0; i <= this.numPoints; ++i) {
       for (let j = i + 1; j <= this.numPoints; ++j) {
-        this.lines.push([this.getPosOnCircle(this.circleAngle * j), this.getPosOnCircle(this.circleAngle * i)]);
+        this.lines.push([this.circumferencePoints[j % this.numPoints], this.circumferencePoints[i % this.numPoints]]);
       }
     }
 
@@ -163,20 +164,35 @@ class MoserCircleData {
     }
 
     // Outside edge faces
-    for (let i = 0; i <= this.numPoints; ++i) {
-      const baseAng = this.circleAngle * i;
-      const pos = this.getPosOnCircle(baseAng);
-      let vertices = [pos];
-      const numVerts = Math.round(128/this.numPoints);
-      for(let v = 0; v <= numVerts; ++v) {
-        vertices.push(this.getPosOnCircle(baseAng + this.circleAngle/numVerts * v));
+    for (let i = 0; i < this.numPoints; ++i) {
+      const fromPos = this.circumferencePoints[i];
+      const fromDir = p5.Vector.sub(fromPos, this.circlePos);
+      const toPos = this.circumferencePoints[(i + 1) % this.numPoints];
+      const toDir = p5.Vector.sub(toPos, this.circlePos);
+      const baseAng = fromDir.heading();
+      const angleBetween = Math.abs(fromDir.angleBetween(toDir));
+      let vertices = [fromPos];
+      const numVerts = Math.ceil(128 / (PI * 2.0) * angleBetween);
+      const angleGap = angleBetween / numVerts;
+      for (let v = 0; v <= numVerts; ++v) {
+        vertices.push(this.getPosOnCircle(baseAng + angleGap * v));
       }
       this.faces.push(vertices);
     }
   }
 
+  getCirclePoint(idx) {
+    if (this.randomise) {
+      const offset = createVector(sin(Math.random() * PI * 2.0), cos(Math.random() * PI * 2.0)).mult(this.circleRadius / 2.0);
+      return p5.Vector.add(this.circlePos, offset);
+    }
+    else {
+      return this.getPosOnCircle(this.circleAngle * idx);
+    }
+  }
+
   getPosOnCircle(angle) {
-    const offset = createVector(sin(angle), cos(angle)).mult(this.circleRadius/2.0);
+    const offset = createVector(cos(angle), sin(angle)).mult(this.circleRadius / 2.0);
     return p5.Vector.add(this.circlePos, offset);
-  }  
+  }
 }

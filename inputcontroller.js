@@ -19,7 +19,7 @@ class InputController {
     this.slider.position(0,0);
     this.slider.input(() => this.inputChanged());
 
-    this.pointsSlider = createSlider(3,50,9,1);
+    this.pointsSlider = createSlider(3,30,9,1);
     this.pointsSlider.position(150,0);
     this.pointsSlider.input(() => this.inputChanged());
 

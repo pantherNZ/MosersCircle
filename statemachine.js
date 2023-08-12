@@ -19,7 +19,7 @@ const StateLength = Object.freeze([
 class StateMachine {
   constructor() {
     this.onStateChanged = new Event("stateChanged");
-    this.state = State.Intro;
+    this.state = State.CountFaces;
     this.time = 0.0;
     this.speed = 1.0;
     this.numCycles = 0;
