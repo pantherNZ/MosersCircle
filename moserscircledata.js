@@ -21,9 +21,19 @@ class MoserCircleData {
     return binomialCoefficient(this.numPoints, 4);
   }
 
-  computeData(inputData) {
-    this.randomise = inputData.randomisePoints;
-    this.numPoints = inputData.numPoints;
+  updatePoint(idx, pos) {
+    let direction = p5.Vector.sub(pos, this.circlePos);
+    direction.setMag(this.circleRadius / 2.0);
+    this.circumferencePoints[idx] = p5.Vector.add(this.circlePos, direction);
+    this.computeData(null, false);
+  }
+
+  computeData(inputData, recomputeEdgePoints=true) {
+    if(inputData != null) {
+      this.randomise = inputData.randomisePoints;
+      this.numPoints = inputData.numPoints;
+    }
+
     this.numLines = (this.numPoints * (this.numPoints - 1)) / 2;
     this.circleAngle = PI * 2.0 / this.numPoints;
 
@@ -32,9 +42,11 @@ class MoserCircleData {
     this.circleRadius = Math.min(width, height) * circleScale;
     this.quadruplets = combinations(this.numPoints, 4);
 
-    this.circumferencePoints = [];
-    for (let i = 0; i < this.numPoints; ++i) {
-      this.circumferencePoints.push(this.getCirclePoint(i));
+    if(recomputeEdgePoints) {
+      this.circumferencePoints = [];
+      for (let i = 0; i < this.numPoints; ++i) {
+        this.circumferencePoints.push(this.getCirclePoint(i));
+      }
     }
 
     this.circumferencePoints.sort((a, b) => p5.Vector.sub(a, this.circlePos).heading() - p5.Vector.sub(b, this.circlePos).heading());
@@ -189,6 +201,8 @@ class MoserCircleData {
       }
       this.faces.push(vertices);
     }
+
+    this.faces.sort((a, b) => p5.Vector.sub(getPolygonCentroid(a), this.circlePos).magSq() - p5.Vector.sub(getPolygonCentroid(b), this.circlePos).magSq());
   }
 
   getCirclePoint(idx) {

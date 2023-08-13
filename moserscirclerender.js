@@ -100,8 +100,8 @@ class MoserRenderData {
     // Faces
     if (stateMachine.state == State.CountFaces) {
       let timePerFace = stateMachine.getStateLength() / 4.0 / data.faces.length;
-      for (let numFaces = 0; numFaces < data.faces.length && numFaces * timePerFace < stateMachine.time; ++numFaces) {
-        drawFace(stateMachine.numCycles, numFaces, data.faces[numFaces]);
+      for (let i = 0; i < data.faces.length && i * timePerFace < stateMachine.time; ++i) {
+        drawFace(stateMachine.numCycles, i, data.faces[i]);
       }
     }
   }

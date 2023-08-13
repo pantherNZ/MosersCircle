@@ -56,7 +56,7 @@ function mousePressed() {
 
 function mouseDragged() {
   if(dragging != null) {
-    data.circumferencePoints[dragging] = createVector(mouseX, mouseY);
+    data.updatePoint(dragging, createVector(mouseX, mouseY));
   }
 }
 
