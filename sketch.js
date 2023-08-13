@@ -3,10 +3,8 @@
 
 // TODO:
 // Drag and drop points input
-// Randomise vs symetrical dropdown option
-// Input for # points
 
-let stateMachine, data, renderData, textDisplay, input;
+let stateMachine, data, renderData, textDisplay, input, dragging;
 
 function setup() {
   let canvas = createCanvas(windowWidth, windowHeight);
@@ -20,8 +18,16 @@ function setup() {
   
   windowResized();
 
-  input.addInputChangedCallback((inputData) => stateMachine.onInputChanged(inputData));
-  input.addInputChangedCallback((inputData) => windowResized());
+  input.addInputChangedCallback((inputData) => {
+    stateMachine.onInputChanged(inputData);
+    windowResized();
+  });
+
+  stateMachine.addStateChangedCallback((old, newState) => {
+    if(newState == State.Intro) {
+      windowResized();
+    }
+  });
 }
 
 function draw() {
@@ -35,4 +41,25 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   data.computeData(input.data);
   textDisplay.initialise(data);
+}
+
+function mousePressed() {
+  const pointCollisionSize = 20;
+  const mouse = createVector(mouseX, mouseY);
+  for(const [index, pos] of data.circumferencePoints.entries()) {
+    if(p5.Vector.sub(pos, mouse).magSq() <= pointCollisionSize * pointCollisionSize) {
+      dragging = index;
+      break;
+    }
+  }
+}
+
+function mouseDragged() {
+  if(dragging != null) {
+    data.circumferencePoints[dragging] = createVector(mouseX, mouseY);
+  }
+}
+
+function mouseReleased() {
+  dragging = null;
 }

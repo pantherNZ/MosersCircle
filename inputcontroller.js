@@ -11,17 +11,19 @@ class InputController {
     this.data = new InputData();
     this.callbacks = [];
     
-    let button = createButton('submit');
-    button.position(0, 65);
-    button.mousePressed(x => {});
-
     this.slider = createSlider(0,5,1,0.2);
     this.slider.position(0,0);
     this.slider.input(() => this.inputChanged());
 
+    this.speedText = createElement('speedText', 'Speed: ' + this.data.animationSpeed);
+    this.speedText.position(30,20);
+
     this.pointsSlider = createSlider(3,30,9,1);
     this.pointsSlider.position(150,0);
     this.pointsSlider.input(() => this.inputChanged());
+
+    this.pointsText = createElement('pointsText', 'Points: ' + this.data.numPoints);
+    this.pointsText.position(180,20);
 
     this.selector = createSelect();
     this.selector.position(300, 0);
@@ -38,6 +40,8 @@ class InputController {
     this.data.animationSpeed = this.slider.value();
     this.data.randomisePoints = this.selector.value() == 'Random';
     this.data.numPoints = this.pointsSlider.value();
+    this.speedText.html("Speed: " + this.data.animationSpeed);
+    this.pointsText.html("Points: " + this.data.numPoints);
     this.callbacks.forEach(x => x(this.data));
   }
 }

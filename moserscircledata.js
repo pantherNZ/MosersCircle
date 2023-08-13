@@ -22,7 +22,7 @@ class MoserCircleData {
   }
 
   computeData(inputData) {
-    this.randomise = inputData.randomise;
+    this.randomise = inputData.randomisePoints;
     this.numPoints = inputData.numPoints;
     this.numLines = (this.numPoints * (this.numPoints - 1)) / 2;
     this.circleAngle = PI * 2.0 / this.numPoints;
@@ -37,6 +37,8 @@ class MoserCircleData {
       this.circumferencePoints.push(this.getCirclePoint(i));
     }
 
+    this.circumferencePoints.sort((a, b) => p5.Vector.sub(a, this.circlePos).heading() - p5.Vector.sub(b, this.circlePos).heading());
+
     this.lines = [];
     for (let i = 0; i <= this.numPoints; ++i) {
       for (let j = i + 1; j <= this.numPoints; ++j) {
@@ -50,7 +52,10 @@ class MoserCircleData {
       const posB = this.circumferencePoints[quad[1]];
       const posC = this.circumferencePoints[quad[2]];
       const posD = this.circumferencePoints[quad[3]];
-      this.intersections.push(lineIntersection(posA, posC, posB, posD));
+      const intersect = lineIntersection(posA, posC, posB, posD);
+      if(intersect != null) {
+        this.intersections.push(intersect);
+      }
     });
 
     this.closestIntersectPerLine = {};
@@ -60,6 +65,9 @@ class MoserCircleData {
       const posC = this.circumferencePoints[quad[2]];
       const posD = this.circumferencePoints[quad[3]];
       const intersect = lineIntersection(posA, posC, posB, posD);
+      if(intersect == null) {
+        return;
+      }
       const lines = [[posA, posC], [posB, posD]];
 
       lines.forEach(p => {
@@ -96,8 +104,10 @@ class MoserCircleData {
     for (let i = 0; i < this.circumferencePoints.length; ++i) {
       const posA = this.circumferencePoints[i];
       const posB = this.circumferencePoints[(i + 1) % this.circumferencePoints.length];
-      this.planarGraph[hashVec(posB)].push(posA);
-      this.planarGraph[hashVec(posA)].push(posB);
+      if(hashVec(posB) in this.planarGraph)
+        this.planarGraph[hashVec(posB)].push(posA);
+        if(hashVec(posA) in this.planarGraph)
+        this.planarGraph[hashVec(posA)].push(posB);
     }
 
     // Sort planar graph nodes for each node by its clockwise connections
@@ -183,7 +193,8 @@ class MoserCircleData {
 
   getCirclePoint(idx) {
     if (this.randomise) {
-      const offset = createVector(sin(Math.random() * PI * 2.0), cos(Math.random() * PI * 2.0)).mult(this.circleRadius / 2.0);
+      const randomAngle = Math.random() * 2.0 * PI;
+      const offset = createVector(cos(randomAngle), sin(randomAngle)).mult(this.circleRadius / 2.0);
       return p5.Vector.add(this.circlePos, offset);
     }
     else {
