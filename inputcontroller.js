@@ -45,3 +45,26 @@ class InputController {
     this.callbacks.forEach(x => x(this.data));
   }
 }
+
+let dragging;
+
+function mousePressed() {
+  const pointCollisionSize = 20;
+  const mouse = createVector(mouseX, mouseY);
+  for(const [index, pos] of data.circumferencePoints.entries()) {
+    if(p5.Vector.sub(pos, mouse).magSq() <= pointCollisionSize * pointCollisionSize) {
+      dragging = index;
+      break;
+    }
+  }
+}
+
+function mouseDragged() {
+  if(dragging != null) {
+    data.updatePoint(dragging, createVector(mouseX, mouseY));
+  }
+}
+
+function mouseReleased() {
+  dragging = null;
+}

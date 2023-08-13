@@ -1,10 +1,7 @@
 // Moser's circle problem
 // https://www.youtube.com/watch?v=YtkIWDE36qU
 
-// TODO:
-// Drag and drop points input
-
-let stateMachine, data, renderData, textDisplay, input, dragging;
+let stateMachine, data, renderData, textDisplay, input;
 
 function setup() {
   let canvas = createCanvas(windowWidth, windowHeight);
@@ -41,25 +38,4 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   data.computeData(input.data);
   textDisplay.initialise(data);
-}
-
-function mousePressed() {
-  const pointCollisionSize = 20;
-  const mouse = createVector(mouseX, mouseY);
-  for(const [index, pos] of data.circumferencePoints.entries()) {
-    if(p5.Vector.sub(pos, mouse).magSq() <= pointCollisionSize * pointCollisionSize) {
-      dragging = index;
-      break;
-    }
-  }
-}
-
-function mouseDragged() {
-  if(dragging != null) {
-    data.updatePoint(dragging, createVector(mouseX, mouseY));
-  }
-}
-
-function mouseReleased() {
-  dragging = null;
 }
